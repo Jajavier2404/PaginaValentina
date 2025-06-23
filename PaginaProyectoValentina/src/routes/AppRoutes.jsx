@@ -8,10 +8,10 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<Login />} />
-            <Route path="/onu" element={<Onu />} />
-            <Route path="/Restric" element={<Restric />} />
-            <Route path="/objetHc" element={<ObjectivosHC />} />
-            <Route path="/hc" element={<HuellaCarbono />} />
+            <Route path="/pagina1" element={<Onu />} />
+            <Route path="/pagina2" element={<Restric />} />
+            <Route path="/pagina3" element={<ObjectivosHC />} />
+            <Route path="/pagina4" element={<HuellaCarbono />} />
         </Routes>
     )
 }

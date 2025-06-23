@@ -1,302 +1,212 @@
-import React, { useState } from 'react';
-import { Globe, Heart, Leaf, Users, Lightbulb, Droplets, Zap, TrendingUp, Building, Scale, Home, Recycle, CloudRain, Fish, TreePine, Shield, Handshake } from 'lucide-react';
+import React from 'react';
+// Elimina los imports de iconos, solo deja Navbar
 import Navbar from "../components/navbar"
 
-export default function Onu() {
-    const [selectedGoal, setSelectedGoal] = useState(null);
-    const sdgData = [
+const ODSPage = () => {
+    const objetivos = [
         {
-            id: 1,
-            title: "Fin de la pobreza",
-            description: "Erradicar la pobreza en todas sus formas y en todo el mundo.",
-            icon: <Heart className="w-8 h-8" />,
-            color: "from-red-500 to-red-600",
-            bgColor: "bg-red-50",
-            textColor: "text-red-700"
+        numero: 1,
+        titulo: "Fin de la pobreza",
+        descripcion: "Erradicar la pobreza en todas sus formas y en todo el mundo.",
+        color: "from-violet-500 to-violet-600",
+        bgColor: "bg-violet-50",
+        borderColor: "border-violet-200"
         },
         {
-            id: 2,
-            title: "Hambre cero",
-            description: "Poner fin al hambre, lograr la seguridad alimentaria y mejorar la nutrición.",
-            icon: <Leaf className="w-8 h-8" />,
-            color: "from-amber-500 to-orange-500",
-            bgColor: "bg-amber-50",
-            textColor: "text-amber-700"
+        numero: 2,
+        titulo: "Hambre cero",
+        descripcion: "Poner fin al hambre, lograr la seguridad alimentaria, mejorar la nutrición y promover la agricultura sostenible.",
+        color: "from-red-500 to-red-600",
+        bgColor: "bg-red-50",
+        borderColor: "border-red-200"
         },
         {
-            id: 3,
-            title: "Salud y bienestar",
-            description: "Garantizar una vida sana y promover el bienestar para todos en todas las edades.",
-            icon: <Heart className="w-8 h-8" />,
-            color: "from-green-500 to-green-600",
-            bgColor: "bg-green-50",
-            textColor: "text-green-700"
+        numero: 3,
+        titulo: "Salud y bienestar",
+        descripcion: "Garantizar una vida sana y promover el bienestar para todos en todas las edades.",
+        color: "from-yellow-500 to-yellow-600",
+        bgColor: "bg-yellow-50",
+        borderColor: "border-yellow-200"
         },
         {
-            id: 4,
-            title: "Educación de calidad",
-            description: "Garantizar una educación inclusiva, equitativa y de calidad.",
-            icon: <Lightbulb className="w-8 h-8" />,
-            color: "from-red-600 to-red-700",
-            bgColor: "bg-red-50",
-            textColor: "text-red-700"
+        numero: 4,
+        titulo: "Educación de calidad",
+        descripcion: "Garantizar una educación inclusiva, equitativa y de calidad y promover oportunidades de aprendizaje durante toda la vida.",
+        color: "from-green-500 to-green-600",
+        bgColor: "bg-green-50",
+        borderColor: "border-green-200"
         },
         {
-            id: 5,
-            title: "Igualdad de género",
-            description: "Lograr la igualdad entre los géneros y empoderar a todas las mujeres y niñas.",
-            icon: <Users className="w-8 h-8" />,
-            color: "from-orange-500 to-red-500",
-            bgColor: "bg-orange-50",
-            textColor: "text-orange-700"
+        numero: 5,
+        titulo: "Igualdad de género",
+        descripcion: "Lograr la igualdad entre los géneros y empoderar a todas las mujeres y niñas.",
+        color: "from-blue-500 to-blue-600",
+        bgColor: "bg-blue-50",
+        borderColor: "border-blue-200"
         },
         {
-            id: 6,
-            title: "Agua limpia y saneamiento",
-            description: "Garantizar la disponibilidad de agua y su gestión sostenible.",
-            icon: <Droplets className="w-8 h-8" />,
-            color: "from-cyan-500 to-blue-500",
-            bgColor: "bg-cyan-50",
-            textColor: "text-cyan-700"
+        numero: 6,
+        titulo: "Agua limpia y saneamiento",
+        descripcion: "Garantizar la disponibilidad de agua y su gestión sostenible y el saneamiento para todos.",
+        color: "from-pink-500 to-pink-600",
+        bgColor: "bg-pink-50",
+        borderColor: "border-pink-200"
         },
         {
-            id: 7,
-            title: "Energía asequible y no contaminante",
-            description: "Asegurar el acceso a energías asequibles, fiables, sostenibles y modernas.",
-            icon: <Zap className="w-8 h-8" />,
-            color: "from-yellow-500 to-yellow-600",
-            bgColor: "bg-yellow-50",
-            textColor: "text-yellow-700"
+        numero: 7,
+        titulo: "Energía asequible y no contaminante",
+        descripcion: "Garantizar el acceso a una energía asequible, segura, sostenible y moderna para todos.",
+        color: "from-cyan-500 to-cyan-600",
+        bgColor: "bg-cyan-50",
+        borderColor: "border-cyan-200"
         },
         {
-            id: 8,
-            title: "Trabajo decente y crecimiento económico",
-            description: "Promover el crecimiento económico sostenido y el empleo digno para todos.",
-            icon: <TrendingUp className="w-8 h-8" />,
-            color: "from-pink-500 to-rose-500",
-            bgColor: "bg-pink-50",
-            textColor: "text-pink-700"
+        numero: 8,
+        titulo: "Trabajo decente y crecimiento económico",
+        descripcion: "Promover el crecimiento económico sostenido, inclusivo y sostenible, el empleo pleno y productivo, y el trabajo decente para todos.",
+        color: "from-amber-500 to-amber-600",
+        bgColor: "bg-amber-50",
+        borderColor: "border-amber-200"
         },
         {
-            id: 9,
-            title: "Industria, innovación e infraestructura",
-            description: "Construir infraestructuras resilientes y fomentar la innovación.",
-            icon: <Building className="w-8 h-8" />,
-            color: "from-orange-600 to-red-600",
-            bgColor: "bg-orange-50",
-            textColor: "text-orange-700"
+        numero: 9,
+        titulo: "Industria, innovación e infraestructura",
+        descripcion: "Construir infraestructuras resilientes, promover la industrialización sostenible y fomentar la innovación.",
+        color: "from-purple-500 to-purple-600",
+        bgColor: "bg-purple-50",
+        borderColor: "border-purple-200"
         },
         {
-            id: 10,
-            title: "Reducción de las desigualdades",
-            description: "Reducir la desigualdad en y entre los países.",
-            icon: <Scale className="w-8 h-8" />,
-            color: "from-purple-500 to-purple-600",
-            bgColor: "bg-purple-50",
-            textColor: "text-purple-700"
+        numero: 10,
+        titulo: "Reducción de las desigualdades",
+        descripcion: "Reducir la desigualdad en y entre los países.",
+        color: "from-orange-500 to-orange-600",
+        bgColor: "bg-orange-50",
+        borderColor: "border-orange-200"
         },
         {
-            id: 11,
-            title: "Ciudades y comunidades sostenibles",
-            description: "Lograr que las ciudades sean inclusivas, seguras y sostenibles.",
-            icon: <Home className="w-8 h-8" />,
-            color: "from-yellow-600 to-orange-500",
-            bgColor: "bg-yellow-50",
-            textColor: "text-yellow-700"
+        numero: 11,
+        titulo: "Ciudades y comunidades sostenibles",
+        descripcion: "Lograr que las ciudades y los asentamientos humanos sean inclusivos, seguros, resilientes y sostenibles.",
+        color: "from-rose-500 to-rose-600",
+        bgColor: "bg-rose-50",
+        borderColor: "border-rose-200"
         },
         {
-            id: 12,
-            title: "Producción y consumo responsables",
-            description: "Garantizar modalidades de consumo y producción sostenibles.",
-            icon: <Recycle className="w-8 h-8" />,
-            color: "from-amber-600 to-yellow-600",
-            bgColor: "bg-amber-50",
-            textColor: "text-amber-700"
+        numero: 12,
+        titulo: "Producción y consumo responsables",
+        descripcion: "Garantizar modalidades de consumo y producción sostenibles.",
+        color: "from-indigo-500 to-indigo-600",
+        bgColor: "bg-indigo-50",
+        borderColor: "border-indigo-200"
         },
         {
-            id: 13,
-            title: "Acción por el clima",
-            description: "Adoptar medidas urgentes para combatir el cambio climático.",
-            icon: <CloudRain className="w-8 h-8" />,
-            color: "from-green-600 to-teal-600",
-            bgColor: "bg-green-50",
-            textColor: "text-green-700"
+        numero: 13,
+        titulo: "Acción por el clima",
+        descripcion: "Adoptar medidas urgentes para combatir el cambio climático y sus efectos.",
+        color: "from-teal-500 to-teal-600",
+        bgColor: "bg-teal-50",
+        borderColor: "border-teal-200"
         },
         {
-            id: 14,
-            title: "Vida submarina",
-            description: "Conservar y utilizar sosteniblemente los océanos y recursos marinos.",
-            icon: <Fish className="w-8 h-8" />,
-            color: "from-blue-500 to-blue-600",
-            bgColor: "bg-blue-50",
-            textColor: "text-blue-700"
+        numero: 14,
+        titulo: "Vida submarina",
+        descripcion: "Conservar y utilizar de forma sostenible los océanos, los mares y los recursos marinos.",
+        color: "from-emerald-500 to-emerald-600",
+        bgColor: "bg-emerald-50",
+        borderColor: "border-emerald-200"
         },
         {
-            id: 15,
-            title: "Vida de ecosistemas terrestres",
-            description: "Gestionar sosteniblemente los bosques y detener la pérdida de biodiversidad.",
-            icon: <TreePine className="w-8 h-8" />,
-            color: "from-green-700 to-green-800",
-            bgColor: "bg-green-50",
-            textColor: "text-green-800"
+        numero: 15,
+        titulo: "Vida de ecosistemas terrestres",
+        descripcion: "Gestionar sosteniblemente los bosques, luchar contra la desertificación, detener y revertir la degradación de las tierras y frenar la pérdida de biodiversidad.",
+        color: "from-blue-400 to-blue-500",
+        bgColor: "bg-blue-50",
+        borderColor: "border-blue-200"
         },
         {
-            id: 16,
-            title: "Paz, justicia e instituciones sólidas",
-            description: "Promover sociedades pacíficas, justas e inclusivas.",
-            icon: <Shield className="w-8 h-8" />,
-            color: "from-blue-600 to-indigo-600",
-            bgColor: "bg-blue-50",
-            textColor: "text-blue-700"
+        numero: 16,
+        titulo: "Paz, justicia e instituciones sólidas",
+        descripcion: "Promover sociedades pacíficas e inclusivas, facilitar el acceso a la justicia y construir instituciones eficaces.",
+        color: "from-green-600 to-green-700",
+        bgColor: "bg-green-50",
+        borderColor: "border-green-200"
         },
         {
-            id: 17,
-            title: "Alianzas para lograr los objetivos",
-            description: "Revitalizar la Alianza Mundial para el Desarrollo Sostenible.",
-            icon: <Handshake className="w-8 h-8" />,
-            color: "from-indigo-600 to-purple-600",
-            bgColor: "bg-indigo-50",
-            textColor: "text-indigo-700"
+        numero: 17,
+        titulo: "Alianzas para lograr los objetivos",
+        descripcion: "Revitalizar la Alianza Mundial para el Desarrollo Sostenible y fortalecer los medios de implementación.",
+        color: "from-slate-500 to-slate-600",
+        bgColor: "bg-slate-50",
+        borderColor: "border-slate-200"
         }
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 ml-72">
+
+        {/* Header */}
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-16 px-8">
             <Navbar />
-
-            {/* Hero Section */}
-            <div className="relative overflow-hidden bg-gradient-to-r from-green-600 to-emerald-900">
-                <div className="absolute inset-0 bg-black opacity-20"></div>
-                <div className="relative container mx-auto px-6 py-20 text-center text-white">
-                    <div className="flex items-center justify-center mb-6">
-                        <Globe className="w-16 h-16 mr-4 animate-pulse" />
-                        <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                            17 ODS
-                        </h1>
-                    </div>
-                    <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-                        Objetivos de Desarrollo Sostenible
-                    </h2>
-                    <p className="text-xl md:text-2xl opacity-90 max-w-4xl mx-auto leading-relaxed">
-                        Una agenda transformadora hacia un futuro sostenible para la humanidad y nuestro planeta 🌍
-                    </p>
-                    <div className="mt-8 flex justify-center">
-                        <div className="bg-white text-black bg-opacity-20 backdrop-blur-lg rounded-full px-8 py-3">
-                            <span className="text-lg font-medium">Organización de las Naciones Unidas</span>
-                        </div>
-                    </div>
-                </div>
-                
-                {/* Floating elements */}
-                <div className="absolute top-20 left-10 animate-bounce">
-                    <div className="w-4 h-4 bg-white bg-opacity-30 rounded-full"></div>
-                </div>
-                <div className="absolute top-40 right-20 animate-bounce delay-1000">
-                    <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full"></div>
-                </div>
-                <div className="absolute bottom-20 left-1/4 animate-bounce delay-500">
-                    <div className="w-3 h-3 bg-white bg-opacity-40 rounded-full"></div>
-                </div>
+            <div className="max-w-6xl mx-auto">
+            <div className="text-center">
+                <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
+                Objetivos de la ONU
+                </h1>
+                <p className="text-xl text-emerald-100 max-w-3xl mx-auto leading-relaxed">
+                Los 17 Objetivos de Desarrollo Sostenible (ODS) constituyen un llamado universal a la acción para poner fin a la pobreza, proteger el planeta y garantizar que todas las personas gocen de paz y prosperidad para 2030.
+                </p>
             </div>
-
-            {/* SDG Grid */}
-            <div className="container mx-auto px-6 py-16">
-                <div className="text-center mb-12">
-                    <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                        Los 17 Objetivos para Transformar el Mundo
-                    </h3>
-                    <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Estos objetivos interconectados abordan los desafíos globales más urgentes, 
-                        desde la erradicación de la pobreza hasta la protección del planeta.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {sdgData.map((goal, index) => (
-                        <div
-                            key={goal.id}
-                            className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 ${goal.bgColor}`}
-                            onClick={() => setSelectedGoal(selectedGoal === goal.id ? null : goal.id)}
-                            style={{
-                                animationDelay: `${index * 100}ms`
-                            }}
-                        >
-                            <div className={`absolute inset-0 bg-gradient-to-br ${goal.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                            
-                            <div className="relative p-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <div className={`p-3 rounded-xl bg-gradient-to-br ${goal.color} text-white shadow-lg`}>
-                                        {goal.icon}
-                                    </div>
-                                    <div className={`text-2xl font-bold ${goal.textColor} bg-white bg-opacity-60 rounded-full w-10 h-10 flex items-center justify-center`}>
-                                        {goal.id}
-                                    </div>
-                                </div>
-                                
-                                <h4 className={`text-lg font-bold ${goal.textColor} mb-3 group-hover:text-gray-800 transition-colors`}>
-                                    {goal.title}
-                                </h4>
-                                
-                                <div className={`overflow-hidden transition-all duration-500 ${
-                                    selectedGoal === goal.id ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
-                                }`}>
-                                    <p className="text-gray-700 text-sm leading-relaxed border-t pt-3 mt-3">
-                                        {goal.description}
-                                    </p>
-                                </div>
-                                
-                                <div className="mt-4 flex items-center text-sm text-gray-500">
-                                    <span className="group-hover:text-gray-700 transition-colors">
-                                        {selectedGoal === goal.id ? 'Clic para cerrar' : 'Clic para más info'}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
             </div>
+        </div>
 
-            {/* Call to Action */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-900 py-16">
-                <div className="container mx-auto px-6 text-center text-white">
-                    <h3 className="text-3xl md:text-4xl font-bold mb-6">
-                        Juntos Podemos Hacer la Diferencia
-                    </h3>
-                    <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-                        Los ODS nos guían hacia un mundo más justo, próspero y sostenible. 
-                        Cada acción cuenta, cada voz importa.
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-4">
-                        <div className="bg-white text-black bg-opacity-20 backdrop-blur-lg rounded-full px-6 py-3">
-                            <span className="font-semibold">🎯 Meta: 2030</span>
-                        </div>
-                        <div className="bg-white text-black bg-opacity-20 backdrop-blur-lg rounded-full px-6 py-3">
-                            <span className="font-semibold">🌍 Global</span>
-                        </div>
-                        <div className="bg-white text-black bg-opacity-20 backdrop-blur-lg rounded-full px-6 py-3">
-                            <span className="font-semibold">🤝 Colaborativo</span>
+        {/* Contenido principal */}
+        <div className="max-w-7xl mx-auto px-8 py-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {objetivos.map((objetivo) => (
+                <div
+                    key={objetivo.numero}
+                    className={`${objetivo.bgColor} ${objetivo.borderColor} border-2 rounded-2xl p-6 shadow-lg`}
+                >
+                    <div className="flex items-start space-x-4">
+                        {/* Número del objetivo */}
+                        <div className={`bg-gradient-to-br ${objetivo.color} text-white rounded-xl p-3 shadow-lg`}>
+                            <span className="text-xl font-bold">{objetivo.numero}</span>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            {/* Footer */}
-            <footer className="bg-gray-900 text-white py-12">
-                <div className="container mx-auto px-6 text-center">
-                    <div className="flex items-center justify-center mb-6">
-                        <Globe className="w-8 h-8 mr-3" />
-                        <span className="text-xl font-semibold">Objetivos de Desarrollo Sostenible</span>
-                    </div>
-                    <p className="text-gray-400 mb-4">
-                        Organización de las Naciones Unidas - Agenda 2030
-                    </p>
-                    <div className="border-t border-gray-700 pt-6">
-                        <p className="text-sm text-gray-500">
-                            "No dejar a nadie atrás" - Principio fundamental de los ODS
+                    {/* Contenido */}
+                    <div className="mt-4">
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">
+                            {objetivo.titulo}
+                        </h3>
+                        <p className="text-gray-600 leading-relaxed text-sm">
+                            {objetivo.descripcion}
                         </p>
                     </div>
                 </div>
-            </footer>
+            ))}
+            </div>
+
+            {/* Sección informativa adicional */}
+            <div className="mt-16 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-3xl p-8 border border-emerald-200">
+            <div className="text-center">
+                <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                Agenda 2030 para el Desarrollo Sostenible
+                </h2>
+                <p className="text-gray-600 max-w-4xl mx-auto leading-relaxed">
+                Adoptada por todos los Estados Miembros de las Naciones Unidas en 2015, la Agenda 2030 
+                proporciona un plan compartido para la paz y la prosperidad de las personas y el planeta, 
+                ahora y en el futuro. Los ODS reconocen que la erradicación de la pobreza debe ir acompañada 
+                de estrategias que fomenten el crecimiento económico y aborden una serie de necesidades sociales, 
+                incluidas la educación, la salud, la protección social y las oportunidades de empleo, 
+                al tiempo que se lucha contra el cambio climático y se protege el medio ambiente.
+                </p>
+            </div>
+            </div>
+        </div>
         </div>
     );
-}
+};
+
+export default ODSPage;

@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
-import { Calculator, Leaf, Car, Home, Plane, Utensils, TrendingDown, Target, Zap, TreePine } from 'lucide-react';
+import { Calculator, Zap, Car, Home, Plane, Leaf, RotateCcw } from 'lucide-react';
 import Navbar from "../components/navbar"
 
-export default function HuellaCarbono() {
+const CarbonFootprintCalculator = () => {
     const [activities, setActivities] = useState({
-        transporte: 0,
-        energia: 0,
-        alimentacion: 0,
-        vuelos: 0
+        electricity: 0,    // kWh por mes
+        transport: 0,      // km por mes en auto
+        flights: 0,        // horas de vuelo por año
+        heating: 0         // m³ de gas por mes
     });
 
-    // Factores de emisión simplificados (kg CO₂e por unidad)
+    const [result, setResult] = useState(null);
+
+    // Factores de emisión simplificados (kg CO₂e)
     const emissionFactors = {
-        transporte: 0.21,    // kg CO₂e por km en auto
-        energia: 0.45,       // kg CO₂e por kWh
-        alimentacion: 2.5,   // kg CO₂e por día (dieta promedio)
-        vuelos: 0.25         // kg CO₂e por km en vuelo
+        electricity: 0.233,  // kg CO₂e por kWh
+        transport: 0.21,     // kg CO₂e por km
+        flights: 90,         // kg CO₂e por hora de vuelo
+        heating: 2.0         // kg CO₂e por m³ de gas
     };
 
     const handleInputChange = (activity, value) => {
@@ -25,304 +27,225 @@ export default function HuellaCarbono() {
         }));
     };
 
-    // Aplicando la fórmula: Huella de Carbono = Σ(Actividad × Factor de Emisión)
-    const calculateCarbonFootprint = () => {
-        let total = 0;
-        Object.keys(activities).forEach(activity => {
-        total += activities[activity] * emissionFactors[activity];
-        });
-        return total;
-    };
+    const calculateFootprint = () => {
+        const monthlyElectricity = activities.electricity * emissionFactors.electricity;
+        const monthlyTransport = activities.transport * emissionFactors.transport;
+        const monthlyFlights = (activities.flights * emissionFactors.flights) / 12; // Anual a mensual
+        const monthlyHeating = activities.heating * emissionFactors.heating;
 
-    const totalEmissions = calculateCarbonFootprint();
+        const totalMonthly = monthlyElectricity + monthlyTransport + monthlyFlights + monthlyHeating;
+        const totalAnnual = totalMonthly * 12;
 
-    const getEmissionLevel = (emissions) => {
-        if (emissions < 100) return { level: "Excelente", color: "text-green-600", bg: "bg-green-100", gradient: "from-green-500 to-green-600" };
-        if (emissions < 500) return { level: "Bueno", color: "text-yellow-600", bg: "bg-yellow-100", gradient: "from-yellow-500 to-orange-500" };
-        if (emissions < 1000) return { level: "Moderado", color: "text-orange-600", bg: "bg-orange-100", gradient: "from-orange-500 to-red-500" };
-        return { level: "Alto", color: "text-red-600", bg: "bg-red-100", gradient: "from-red-500 to-red-600" };
-    };
-
-    const emissionLevel = getEmissionLevel(totalEmissions);
-
-    const inputCategories = [
-        {
-            key: 'transporte',
-            title: 'Transporte Terrestre',
-            icon: <Car className="w-6 h-6" />,
-            placeholder: 'Kilómetros recorridos en auto/mes',
-            factor: '0.21 kg CO₂e por km',
-            color: 'from-blue-500 to-blue-600',
-            bgColor: 'bg-blue-50',
-            iconColor: 'text-blue-600'
-        },
-        {
-            key: 'energia',
-            title: 'Consumo Energético',
-            icon: <Home className="w-6 h-6" />,
-            placeholder: 'kWh consumidos en casa/mes',
-            factor: '0.45 kg CO₂e por kWh',
-            color: 'from-yellow-500 to-orange-500',
-            bgColor: 'bg-yellow-50',
-            iconColor: 'text-yellow-600'
-        },
-        {
-            key: 'alimentacion',
-            title: 'Alimentación',
-            icon: <Utensils className="w-6 h-6" />,
-            placeholder: 'Días con dieta promedio/mes',
-            factor: '2.5 kg CO₂e por día',
-            color: 'from-green-500 to-green-600',
-            bgColor: 'bg-green-50',
-            iconColor: 'text-green-600'
-        },
-        {
-            key: 'vuelos',
-            title: 'Vuelos',
-            icon: <Plane className="w-6 h-6" />,
-            placeholder: 'Kilómetros volados/mes',
-            factor: '0.25 kg CO₂e por km',
-            color: 'from-purple-500 to-purple-600',
-            bgColor: 'bg-purple-50',
-            iconColor: 'text-purple-600'
+        setResult({
+        monthly: totalMonthly,
+        annual: totalAnnual,
+        breakdown: {
+            electricity: monthlyElectricity,
+            transport: monthlyTransport,
+            flights: monthlyFlights,
+            heating: monthlyHeating
         }
-    ];
+        });
+    };
+
+    const resetForm = () => {
+        setActivities({
+        electricity: 0,
+        transport: 0,
+        flights: 0,
+        heating: 0
+        });
+        setResult(null);
+    };
+
+    const getImpactLevel = (annual) => {
+        if (annual < 2000) return { level: 'Bajo', color: 'text-emerald-500', bg: 'bg-emerald-500/10' };
+        if (annual < 5000) return { level: 'Moderado', color: 'text-yellow-500', bg: 'bg-yellow-500/10' };
+        return { level: 'Alto', color: 'text-red-500', bg: 'bg-red-500/10' };
+    };
+
+    const impact = result ? getImpactLevel(result.annual) : null;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-indigo-50">
-            {/* Hero Section */}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 ml-72">
             <Navbar />
 
-            <div className="relative overflow-hidden bg-gradient-to-r from-green-600 to-emerald-900">
-                <div className="absolute inset-0 bg-black opacity-20"></div>
-                <div className="relative container mx-auto px-6 py-20 text-center text-white">
-                    <div className="flex items-center justify-center mb-6">
-                        <Calculator className="w-16 h-16 mr-4 animate-pulse" />
-                        <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-white to-green-200 bg-clip-text text-transparent">
-                            Calculadora
-                        </h1>
-                    </div>
-                    <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-                        Huella de Carbono Personal
-                    </h2>
-                    <p className="text-xl md:text-2xl opacity-90 max-w-4xl mx-auto leading-relaxed">
-                        Mide tu impacto ambiental mensual 🌱
+        {/* Efecto de textura de fondo */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIxIiBmaWxsPSJyZ2JhKDE2LCAxODUsIDEyOSwgMC4wNSkiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30"></div>
+        
+        <div className="relative z-10 p-8">
+            {/* Header */}
+            <div className="mb-12">
+                <div className="flex flex-col items-center mb-10 mt-5">   
+                    <h1 className="text-4xl font-bold text-gray-800 text-center">Calculadora de Huella de Carbono</h1>
+                    <p className="text-gray-600 text-lg mt-2 text-center">Descubre tu impacto ambiental de forma sencilla</p>
+                </div>
+                {/* Fórmula */}
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-emerald-200/50 shadow-sm flex flex-col items-center justify-center">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-2 text-center">Fórmula aplicada:</h3>
+                    <p className="text-emerald-700 font-mono text-lg text-center">
+                        <strong>Huella de Carbono (kg CO₂e) = Σ(Actividad × Factor de Emisión)</strong>
                     </p>
-                    <div className="mt-8 bg-blue-100 rounded-2xl p-6 max-w-2xl mx-auto">
-                        <p className="text-sm text-blue-800 font-medium">
-                            <strong>Fórmula:</strong> Huella de Carbono (kg CO₂e) = Σ(Actividad × Factor de Emisión)
+                </div>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8">
+            {/* Formulario */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-emerald-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                <Leaf className="h-6 w-6 text-emerald-600 mr-3" />
+                Ingresa tus datos
+                </h2>
+
+                <div className="space-y-6">
+                {/* Electricidad */}
+                <div className="group">
+                    <label className="flex items-center text-gray-700 font-medium mb-3">
+                    <Zap className="h-5 w-5 text-yellow-500 mr-2" />
+                    Consumo eléctrico mensual (kWh)
+                    </label>
+                    <input
+                    type="number"
+                    min="0"
+                    value={activities.electricity}
+                    onChange={(e) => handleInputChange('electricity', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 group-hover:border-emerald-300"
+                    placeholder="Ej: 300"
+                    />
+                </div>
+
+                {/* Transporte */}
+                <div className="group">
+                    <label className="flex items-center text-gray-700 font-medium mb-3">
+                    <Car className="h-5 w-5 text-blue-500 mr-2" />
+                    Kilómetros en auto por mes
+                    </label>
+                    <input
+                    type="number"
+                    min="0"
+                    value={activities.transport}
+                    onChange={(e) => handleInputChange('transport', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 group-hover:border-emerald-300"
+                    placeholder="Ej: 800"
+                    />
+                </div>
+
+                {/* Vuelos */}
+                <div className="group">
+                    <label className="flex items-center text-gray-700 font-medium mb-3">
+                    <Plane className="h-5 w-5 text-indigo-500 mr-2" />
+                    Horas de vuelo al año
+                    </label>
+                    <input
+                    type="number"
+                    min="0"
+                    value={activities.flights}
+                    onChange={(e) => handleInputChange('flights', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 group-hover:border-emerald-300"
+                    placeholder="Ej: 10"
+                    />
+                </div>
+
+                {/* Calefacción */}
+                <div className="group">
+                    <label className="flex items-center text-gray-700 font-medium mb-3">
+                    <Home className="h-5 w-5 text-orange-500 mr-2" />
+                    Gas para calefacción mensual (m³)
+                    </label>
+                    <input
+                    type="number"
+                    min="0"
+                    value={activities.heating}
+                    onChange={(e) => handleInputChange('heating', e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 group-hover:border-emerald-300"
+                    placeholder="Ej: 50"
+                    />
+                </div>
+                </div>
+
+                {/* Botones */}
+                <div className="flex space-x-4 mt-8">
+                <button
+                    onClick={calculateFootprint}
+                    className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-6 py-3 rounded-lg font-medium hover:from-emerald-600 hover:to-teal-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-emerald-500/25"
+                >
+                    Calcular Huella
+                </button>
+                <button
+                    onClick={resetForm}
+                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-all duration-200 flex items-center"
+                >
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Limpiar
+                </button>
+                </div>
+            </div>
+
+            {/* Resultados */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-emerald-100">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Resultados</h2>
+
+                {result ? (
+                <div className="space-y-6">
+                    {/* Resultado principal */}
+                    <div className={`p-6 rounded-xl ${impact?.bg} border-2 border-emerald-200/50`}>
+                    <div className="text-center">
+                        <p className="text-gray-600 mb-2">Tu huella de carbono anual es:</p>
+                        <p className="text-4xl font-bold text-gray-800">
+                        {result.annual.toLocaleString('es-ES', { maximumFractionDigits: 0 })}
                         </p>
+                        <p className="text-gray-500 text-sm">kg CO₂e por año</p>
+                        <div className={`mt-3 inline-block px-4 py-2 rounded-full ${impact?.bg}`}>
+                        <span className={`font-medium ${impact?.color}`}>
+                            Impacto {impact?.level}
+                        </span>
+                        </div>
+                    </div>
+                    </div>
+
+                    {/* Desglose mensual */}
+                    <div className="bg-gray-50 rounded-xl p-6">
+                    <h3 className="font-semibold text-gray-700 mb-4">Desglose mensual (kg CO₂e):</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="flex justify-between">
+                        <span className="text-gray-600">Electricidad:</span>
+                        <span className="font-medium">{result.breakdown.electricity.toFixed(1)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                        <span className="text-gray-600">Transporte:</span>
+                        <span className="font-medium">{result.breakdown.transport.toFixed(1)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                        <span className="text-gray-600">Vuelos:</span>
+                        <span className="font-medium">{result.breakdown.flights.toFixed(1)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                        <span className="text-gray-600">Calefacción:</span>
+                        <span className="font-medium">{result.breakdown.heating.toFixed(1)}</span>
+                        </div>
+                    </div>
+                    <div className="border-t border-gray-200 mt-4 pt-4">
+                        <div className="flex justify-between font-semibold">
+                        <span>Total mensual:</span>
+                        <span>{result.monthly.toFixed(1)} kg CO₂e</span>
+                        </div>
+                    </div>
                     </div>
                 </div>
-                
-                {/* Floating CO2 molecules animation */}
-                <div className="absolute top-20 left-10 animate-bounce">
-                    <div className="w-4 h-4 bg-white bg-opacity-30 rounded-full"></div>
+                ) : (
+                <div className="text-center py-12">
+                    <div className="bg-gray-100 rounded-full p-6 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                    <Calculator className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 text-lg">Ingresa tus datos para calcular tu huella de carbono</p>
+                    <p className="text-gray-400 text-sm mt-2">Los resultados aparecerán aquí</p>
                 </div>
-                <div className="absolute top-40 right-20 animate-bounce delay-1000">
-                    <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full"></div>
-                </div>
-                <div className="absolute bottom-20 left-1/4 animate-bounce delay-500">
-                    <div className="w-3 h-3 bg-white bg-opacity-40 rounded-full"></div>
-                </div>
+                )}
             </div>
-
-            {/* Key Statistics */}
-            <div className="container mx-auto px-6 py-12">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-green-100">
-                        <div className="flex items-center mb-4">
-                            <div className="bg-green-500 rounded-full p-3 mr-4">
-                                <TreePine className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-2xl font-bold text-green-600">&lt;100</h3>
-                                <p className="text-gray-600">kg CO₂e Excelente</p>
-                            </div>
-                        </div>
-                        <p className="text-sm text-gray-500">Meta personal mensual para un impacto mínimo</p>
-                    </div>
-                    
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-blue-100">
-                        <div className="flex items-center mb-4">
-                            <div className="bg-blue-500 rounded-full p-3 mr-4">
-                                <Target className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-2xl font-bold text-blue-600">500</h3>
-                                <p className="text-gray-600">kg CO₂e Promedio</p>
-                            </div>
-                        </div>
-                        <p className="text-sm text-gray-500">Huella promedio mensual de una persona</p>
-                    </div>
-                    
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-purple-100">
-                        <div className="flex items-center mb-4">
-                            <div className="bg-purple-500 rounded-full p-3 mr-4">
-                                <TrendingDown className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-2xl font-bold text-purple-600">{totalEmissions.toFixed(0)}</h3>
-                                <p className="text-gray-600">Tu huella actual</p>
-                            </div>
-                        </div>
-                        <p className="text-sm text-gray-500">Resultado de tus actividades mensuales</p>
-                    </div>
-                </div>
             </div>
-
-            {/* Calculator Section */}
-            <div className="container mx-auto px-6 pb-16">
-                <div className="text-center mb-12">
-                    <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                        Ingresa tus Actividades Mensuales
-                    </h3>
-                    <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                        Completa la información de tus actividades del mes para calcular tu huella de carbono personal.
-                    </p>
-                </div>
-
-                {/* Input Categories Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-                    {inputCategories.map((category, index) => (
-                        <div
-                            key={category.key}
-                            className={`group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 ${category.bgColor}`}
-                            style={{
-                                animationDelay: `${index * 100}ms`
-                            }}
-                        >
-                            <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                            
-                            <div className="relative p-6">
-                                <div className="flex items-center mb-4">
-                                    <div className={`p-3 rounded-xl bg-gradient-to-br ${category.color} text-white shadow-lg`}>
-                                        {category.icon}
-                                    </div>
-                                    <h4 className={`text-lg font-bold ${category.iconColor} ml-4`}>
-                                        {category.title}
-                                    </h4>
-                                </div>
-                                
-                                <input
-                                    type="number"
-                                    placeholder={category.placeholder}
-                                    className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-green-200 focus:border-green-500 transition-all duration-300 bg-white shadow-inner"
-                                    value={activities[category.key] || ''}
-                                    onChange={(e) => handleInputChange(category.key, e.target.value)}
-                                />
-                                
-                                <div className="mt-3 flex items-center justify-between">
-                                    <p className="text-sm text-gray-500">Factor: {category.factor}</p>
-                                    <div className={`text-lg font-bold ${category.iconColor} bg-white bg-opacity-60 rounded-full px-3 py-1 text-xs`}>
-                                        {(activities[category.key] * emissionFactors[category.key]).toFixed(1)} kg CO₂e
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Results Section */}
-                <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-gray-100">
-                    <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Resultados de tu Huella de Carbono</h2>
-                    
-                    {/* Total Emissions Display */}
-                    <div className="text-center mb-8">
-                        <div className={`inline-block p-8 bg-gradient-to-r ${emissionLevel.gradient} rounded-3xl shadow-2xl text-white`}>
-                            <p className="text-sm opacity-90 mb-2">Tu Huella de Carbono Mensual</p>
-                            <p className="text-5xl font-bold mb-2">{totalEmissions.toFixed(1)}</p>
-                            <p className="text-xl opacity-90">kg CO₂e</p>
-                        </div>
-                    </div>
-
-                    {/* Emission Level */}
-                    <div className={`p-6 rounded-2xl ${emissionLevel.bg} mb-8 border-2 border-opacity-20`}>
-                        <div className="text-center">
-                            <p className="text-sm text-gray-600 mb-2">Nivel de Impacto Ambiental</p>
-                            <p className={`text-3xl font-bold ${emissionLevel.color}`}>{emissionLevel.level}</p>
-                        </div>
-                    </div>
-
-                    {/* Breakdown */}
-                    <div className="space-y-4 mb-8">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Desglose por Actividad</h3>
-                        
-                        {inputCategories.map((category) => (
-                            <div key={category.key} className="flex justify-between items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-300">
-                                <div className="flex items-center">
-                                    <div className={`p-2 rounded-lg bg-gradient-to-br ${category.color} text-white mr-3`}>
-                                        {category.icon}
-                                    </div>
-                                    <span className="text-gray-700 font-medium">{category.title}</span>
-                                </div>
-                                <span className="font-bold text-gray-800 text-lg">
-                                    {(activities[category.key] * emissionFactors[category.key]).toFixed(1)} kg CO₂e
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Quick Tips */}
-                    <div className="p-6 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl border-2 border-green-200">
-                        <h4 className="font-bold text-green-800 mb-3 flex items-center">
-                            <Leaf className="w-5 h-5 mr-2" />
-                            💡 Consejo Personalizado
-                        </h4>
-                        <p className="text-green-700 leading-relaxed">
-                            {totalEmissions < 100 
-                                ? "¡Excelente! Tu huella es muy baja. Mantén estos hábitos sostenibles y considera compartir tus buenas prácticas con otros."
-                                : totalEmissions < 500
-                                ? "Buen trabajo, pero puedes mejorar. Considera usar más el transporte público, bicicleta o caminar para distancias cortas."
-                                : totalEmissions < 1000
-                                ? "Tu huella está en nivel moderado. Intenta reducir los vuelos, optimizar el consumo energético y considerar una dieta más sostenible."
-                                : "Tu huella es alta. Te recomendamos encarecidamente reducir vuelos, mejorar la eficiencia energética del hogar y evaluar opciones de transporte más sostenibles."
-                            }
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            {/* Call to Action */}
-            <div className="bg-gradient-to-r from-green-600 to-emerald-900 py-16">
-                <div className="container mx-auto px-6 text-center text-white">
-                    <h3 className="text-2xl md:text-3xl font-bold mb-4">
-                        Cada Acción Cuenta para el Planeta
-                    </h3>
-                    <p className="text-lg mb-6 max-w-2xl mx-auto opacity-90">
-                        Tu huella de carbono es el primer paso. Ahora es momento de actuar y reducir tu impacto ambiental.
-                    </p>
-                    <div className="flex flex-wrap justify-center gap-4 text-black">
-                        <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-full px-6 py-3">
-                            <span className="font-semibold">🌱 Reduce tu huella</span>
-                        </div>
-                        <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-full px-6 py-3">
-                            <span className="font-semibold">♻️ Consume responsable</span>
-                        </div>
-                        <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-full px-6 py-3">
-                            <span className="font-semibold">🚴 Movilidad sostenible</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Footer */}
-            <footer className="bg-gray-900 text-white py-12">
-                <div className="container mx-auto px-6 text-center">
-                    <div className="flex items-center justify-center mb-6">
-                        <Calculator className="w-8 h-8 mr-3" />
-                        <span className="text-xl font-semibold">Calculadora de Huella de Carbono</span>
-                    </div>
-                    <p className="text-gray-400 mb-4">
-                        Herramienta educativa para la conciencia ambiental
-                    </p>
-                    <div className="border-t border-gray-700 pt-6">
-                        <p className="text-sm text-gray-500">
-                            Los factores de emisión son aproximados. Para cálculos más precisos, consulta fuentes oficiales.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+        </div>
         </div>
     );
-}
+};
+
+export default CarbonFootprintCalculator;
