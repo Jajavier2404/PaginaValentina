@@ -16,21 +16,30 @@ export default function Login() {
         // Still check for empty fields to provide user feedback
         if (username.trim() === "" || password.trim() === "") {
         setError("Por favor, ingresa tu usuario y contraseña.");
-        return; // Stop the function if fields are empty
+            return; // Stop the function if fields are empty
         }
+        fetch("http://localhost:4000/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+        })
+        .then(async (res) => {
+            const data = await res.json();
+            
+            if (!res.ok) {
+                throw new Error(data.message || "Error al registrar usuario");
+            }
 
-        // --- IMPORTANT CHANGE HERE ---
-        // No authentication logic.
-        // The username and password values are captured in the state,
-        // and then the navigation happens directly.
+            console.log("Respuesta del servidor:", data);
+            navigate("/pagina1");
+        })
+        .catch((error) => {
+            console.error("Error al registrar usuario:", error);
+            setError(error.message); // ⬅️ Mostrar error al usuario
+        });
 
-        // In a real application, you would typically send 'username' and 'password'
-        // to your backend here to be stored in a database.
-        // For example:
-        // saveToDatabase({ username, password }); // This would be a function you define
-
-        // Navigate directly to /pagina1 after capturing the values
-        navigate("/pagina1");
     };
 
     return (
